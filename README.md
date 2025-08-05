@@ -6,6 +6,8 @@
 
 ![GitHub Actions](screenshots/github_actions.png)
 
+---
+
 ## 🩷 Login and Register pages
 
 ![GitHub Actions](screenshots/login.png)
