@@ -1,10 +1,9 @@
 # 🩷 Project 12
 
----
 
 ## 🩷 GitHub Actions Workflow
 
-![GitHub Actions](screenshots/github_actions.png)
+![GitHub Actions](screenshots/workflow.png)
 
 ---
 
