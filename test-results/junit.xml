@@ -1,0 +1,1279 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="6" failures="0" skipped="0" tests="6" time="2.897" timestamp="2025-08-04T14:48:38.535256-04:00" hostname="fadels-MacBook-Pro.local"><testcase classname="tests.unit.test_calculator" name="test_add[add_two_positive_integers]" time="0.011"><error message="failed on setup with &quot;sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) connection to server at &quot;localhost&quot; (::1), port 5432 failed: FATAL:  role &quot;postgres&quot; does not exist&#10;&#10;(Background on this error at: https://sqlalche.me/e/20/e3q8)&quot;">self = &lt;sqlalchemy.engine.base.Connection object at 0x106166cf0&gt;, engine = Engine(postgresql://postgres:***@localhost:5432/fastapi_db), connection = None
+_has_events = None, _allow_revalidate = True, _allow_autobegin = True
+
+    def __init__(
+        self,
+        engine: Engine,
+        connection: Optional[PoolProxiedConnection] = None,
+        _has_events: Optional[bool] = None,
+        _allow_revalidate: bool = True,
+        _allow_autobegin: bool = True,
+    ):
+        """Construct a new Connection."""
+        self.engine = engine
+        self.dialect = dialect = engine.dialect
+    
+        if connection is None:
+            try:
+&gt;               self._dbapi_connection = engine.raw_connection()
+
+venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:146: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:3298: in raw_connection
+    return self.pool.connect()
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:449: in connect
+    return _ConnectionFairy._checkout(self)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:1263: in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:712: in checkout
+    rec = pool._do_get()
+venv/lib/python3.13/site-packages/sqlalchemy/pool/impl.py:179: in _do_get
+    with util.safe_reraise():
+venv/lib/python3.13/site-packages/sqlalchemy/util/langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/impl.py:177: in _do_get
+    return self._create_connection()
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:390: in _create_connection
+    return _ConnectionRecord(self)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:674: in __init__
+    self.__connect()
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:900: in __connect
+    with util.safe_reraise():
+venv/lib/python3.13/site-packages/sqlalchemy/util/langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:896: in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+venv/lib/python3.13/site-packages/sqlalchemy/engine/create.py:646: in connect
+    return dialect.connect(*cargs, **cparams)
+venv/lib/python3.13/site-packages/sqlalchemy/engine/default.py:622: in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+dsn = 'host=localhost dbname=fastapi_db user=postgres password=postgres port=5432', connection_factory = None, cursor_factory = None
+kwargs = {'dbname': 'fastapi_db', 'host': 'localhost', 'password': 'postgres', 'port': 5432, ...}, kwasync = {}
+
+    def connect(dsn=None, connection_factory=None, cursor_factory=None, **kwargs):
+        """
+        Create a new database connection.
+    
+        The connection parameters can be specified as a string:
+    
+            conn = psycopg2.connect("dbname=test user=postgres password=secret")
+    
+        or using a set of keyword arguments:
+    
+            conn = psycopg2.connect(database="test", user="postgres", password="secret")
+    
+        Or as a mix of both. The basic connection parameters are:
+    
+        - *dbname*: the database name
+        - *database*: the database name (only as keyword argument)
+        - *user*: user name used to authenticate
+        - *password*: password used to authenticate
+        - *host*: database host address (defaults to UNIX socket if not provided)
+        - *port*: connection port number (defaults to 5432 if not provided)
+    
+        Using the *connection_factory* parameter a different class or connections
+        factory can be specified. It should be a callable object taking a dsn
+        argument.
+    
+        Using the *cursor_factory* parameter, a new default cursor factory will be
+        used by cursor().
+    
+        Using *async*=True an asynchronous connection will be created. *async_* is
+        a valid alias (for Python versions where ``async`` is a keyword).
+    
+        Any other keyword parameter will be passed to the underlying client
+        library: the list of supported parameters depends on the library version.
+    
+        """
+        kwasync = {}
+        if 'async' in kwargs:
+            kwasync['async'] = kwargs.pop('async')
+        if 'async_' in kwargs:
+            kwasync['async_'] = kwargs.pop('async_')
+    
+        dsn = _ext.make_dsn(dsn, **kwargs)
+&gt;       conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+E       psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: FATAL:  role "postgres" does not exist
+
+venv/lib/python3.13/site-packages/psycopg2/__init__.py:122: OperationalError
+
+The above exception was the direct cause of the following exception:
+
+request = &lt;SubRequest 'setup_test_database' for &lt;Function test_add[add_two_positive_integers]&gt;&gt;
+
+    @pytest.fixture(scope="session", autouse=True)
+    def setup_test_database(request):
+        """
+        Set up the test database before the session starts, and tear it down after tests
+        unless --preserve-db is provided.
+        """
+        logger.info("Setting up test database...")
+        try:
+&gt;           Base.metadata.drop_all(bind=test_engine)
+
+tests/conftest.py:97: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+venv/lib/python3.13/site-packages/sqlalchemy/sql/schema.py:5935: in drop_all
+    bind._run_ddl_visitor(
+venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:3248: in _run_ddl_visitor
+    with self.begin() as conn:
+/opt/homebrew/Cellar/python@3.13/3.13.4/Frameworks/Python.framework/Versions/3.13/lib/python3.13/contextlib.py:141: in __enter__
+    return next(self.gen)
+venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:3238: in begin
+    with self.connect() as conn:
+venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:3274: in connect
+    return self._connection_cls(self)
+venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:148: in __init__
+    Connection._handle_dbapi_exception_noconnection(
+venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:2439: in _handle_dbapi_exception_noconnection
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:146: in __init__
+    self._dbapi_connection = engine.raw_connection()
+venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:3298: in raw_connection
+    return self.pool.connect()
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:449: in connect
+    return _ConnectionFairy._checkout(self)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:1263: in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:712: in checkout
+    rec = pool._do_get()
+venv/lib/python3.13/site-packages/sqlalchemy/pool/impl.py:179: in _do_get
+    with util.safe_reraise():
+venv/lib/python3.13/site-packages/sqlalchemy/util/langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/impl.py:177: in _do_get
+    return self._create_connection()
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:390: in _create_connection
+    return _ConnectionRecord(self)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:674: in __init__
+    self.__connect()
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:900: in __connect
+    with util.safe_reraise():
+venv/lib/python3.13/site-packages/sqlalchemy/util/langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:896: in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+venv/lib/python3.13/site-packages/sqlalchemy/engine/create.py:646: in connect
+    return dialect.connect(*cargs, **cparams)
+venv/lib/python3.13/site-packages/sqlalchemy/engine/default.py:622: in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+dsn = 'host=localhost dbname=fastapi_db user=postgres password=postgres port=5432', connection_factory = None, cursor_factory = None
+kwargs = {'dbname': 'fastapi_db', 'host': 'localhost', 'password': 'postgres', 'port': 5432, ...}, kwasync = {}
+
+    def connect(dsn=None, connection_factory=None, cursor_factory=None, **kwargs):
+        """
+        Create a new database connection.
+    
+        The connection parameters can be specified as a string:
+    
+            conn = psycopg2.connect("dbname=test user=postgres password=secret")
+    
+        or using a set of keyword arguments:
+    
+            conn = psycopg2.connect(database="test", user="postgres", password="secret")
+    
+        Or as a mix of both. The basic connection parameters are:
+    
+        - *dbname*: the database name
+        - *database*: the database name (only as keyword argument)
+        - *user*: user name used to authenticate
+        - *password*: password used to authenticate
+        - *host*: database host address (defaults to UNIX socket if not provided)
+        - *port*: connection port number (defaults to 5432 if not provided)
+    
+        Using the *connection_factory* parameter a different class or connections
+        factory can be specified. It should be a callable object taking a dsn
+        argument.
+    
+        Using the *cursor_factory* parameter, a new default cursor factory will be
+        used by cursor().
+    
+        Using *async*=True an asynchronous connection will be created. *async_* is
+        a valid alias (for Python versions where ``async`` is a keyword).
+    
+        Any other keyword parameter will be passed to the underlying client
+        library: the list of supported parameters depends on the library version.
+    
+        """
+        kwasync = {}
+        if 'async' in kwargs:
+            kwasync['async'] = kwargs.pop('async')
+        if 'async_' in kwargs:
+            kwasync['async_'] = kwargs.pop('async_')
+    
+        dsn = _ext.make_dsn(dsn, **kwargs)
+&gt;       conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+E       sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) connection to server at "localhost" (::1), port 5432 failed: FATAL:  role "postgres" does not exist
+E       
+E       (Background on this error at: https://sqlalche.me/e/20/e3q8)
+
+venv/lib/python3.13/site-packages/psycopg2/__init__.py:122: OperationalError</error></testcase><testcase classname="tests.unit.test_calculator" name="test_add[add_two_negative_integers]" time="0.000"><error message="failed on setup with &quot;sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) connection to server at &quot;localhost&quot; (::1), port 5432 failed: FATAL:  role &quot;postgres&quot; does not exist&#10;&#10;(Background on this error at: https://sqlalche.me/e/20/e3q8)&quot;">self = &lt;sqlalchemy.engine.base.Connection object at 0x106166cf0&gt;, engine = Engine(postgresql://postgres:***@localhost:5432/fastapi_db), connection = None
+_has_events = None, _allow_revalidate = True, _allow_autobegin = True
+
+    def __init__(
+        self,
+        engine: Engine,
+        connection: Optional[PoolProxiedConnection] = None,
+        _has_events: Optional[bool] = None,
+        _allow_revalidate: bool = True,
+        _allow_autobegin: bool = True,
+    ):
+        """Construct a new Connection."""
+        self.engine = engine
+        self.dialect = dialect = engine.dialect
+    
+        if connection is None:
+            try:
+&gt;               self._dbapi_connection = engine.raw_connection()
+
+venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:146: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:3298: in raw_connection
+    return self.pool.connect()
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:449: in connect
+    return _ConnectionFairy._checkout(self)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:1263: in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:712: in checkout
+    rec = pool._do_get()
+venv/lib/python3.13/site-packages/sqlalchemy/pool/impl.py:179: in _do_get
+    with util.safe_reraise():
+venv/lib/python3.13/site-packages/sqlalchemy/util/langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/impl.py:177: in _do_get
+    return self._create_connection()
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:390: in _create_connection
+    return _ConnectionRecord(self)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:674: in __init__
+    self.__connect()
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:900: in __connect
+    with util.safe_reraise():
+venv/lib/python3.13/site-packages/sqlalchemy/util/langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:896: in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+venv/lib/python3.13/site-packages/sqlalchemy/engine/create.py:646: in connect
+    return dialect.connect(*cargs, **cparams)
+venv/lib/python3.13/site-packages/sqlalchemy/engine/default.py:622: in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+dsn = 'host=localhost dbname=fastapi_db user=postgres password=postgres port=5432', connection_factory = None, cursor_factory = None
+kwargs = {'dbname': 'fastapi_db', 'host': 'localhost', 'password': 'postgres', 'port': 5432, ...}, kwasync = {}
+
+    def connect(dsn=None, connection_factory=None, cursor_factory=None, **kwargs):
+        """
+        Create a new database connection.
+    
+        The connection parameters can be specified as a string:
+    
+            conn = psycopg2.connect("dbname=test user=postgres password=secret")
+    
+        or using a set of keyword arguments:
+    
+            conn = psycopg2.connect(database="test", user="postgres", password="secret")
+    
+        Or as a mix of both. The basic connection parameters are:
+    
+        - *dbname*: the database name
+        - *database*: the database name (only as keyword argument)
+        - *user*: user name used to authenticate
+        - *password*: password used to authenticate
+        - *host*: database host address (defaults to UNIX socket if not provided)
+        - *port*: connection port number (defaults to 5432 if not provided)
+    
+        Using the *connection_factory* parameter a different class or connections
+        factory can be specified. It should be a callable object taking a dsn
+        argument.
+    
+        Using the *cursor_factory* parameter, a new default cursor factory will be
+        used by cursor().
+    
+        Using *async*=True an asynchronous connection will be created. *async_* is
+        a valid alias (for Python versions where ``async`` is a keyword).
+    
+        Any other keyword parameter will be passed to the underlying client
+        library: the list of supported parameters depends on the library version.
+    
+        """
+        kwasync = {}
+        if 'async' in kwargs:
+            kwasync['async'] = kwargs.pop('async')
+        if 'async_' in kwargs:
+            kwasync['async_'] = kwargs.pop('async_')
+    
+        dsn = _ext.make_dsn(dsn, **kwargs)
+&gt;       conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+E       psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: FATAL:  role "postgres" does not exist
+
+venv/lib/python3.13/site-packages/psycopg2/__init__.py:122: OperationalError
+
+The above exception was the direct cause of the following exception:
+
+request = &lt;SubRequest 'setup_test_database' for &lt;Function test_add[add_two_positive_integers]&gt;&gt;
+
+    @pytest.fixture(scope="session", autouse=True)
+    def setup_test_database(request):
+        """
+        Set up the test database before the session starts, and tear it down after tests
+        unless --preserve-db is provided.
+        """
+        logger.info("Setting up test database...")
+        try:
+&gt;           Base.metadata.drop_all(bind=test_engine)
+
+tests/conftest.py:97: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+venv/lib/python3.13/site-packages/sqlalchemy/sql/schema.py:5935: in drop_all
+    bind._run_ddl_visitor(
+venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:3248: in _run_ddl_visitor
+    with self.begin() as conn:
+/opt/homebrew/Cellar/python@3.13/3.13.4/Frameworks/Python.framework/Versions/3.13/lib/python3.13/contextlib.py:141: in __enter__
+    return next(self.gen)
+venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:3238: in begin
+    with self.connect() as conn:
+venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:3274: in connect
+    return self._connection_cls(self)
+venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:148: in __init__
+    Connection._handle_dbapi_exception_noconnection(
+venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:2439: in _handle_dbapi_exception_noconnection
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:146: in __init__
+    self._dbapi_connection = engine.raw_connection()
+venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:3298: in raw_connection
+    return self.pool.connect()
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:449: in connect
+    return _ConnectionFairy._checkout(self)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:1263: in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:712: in checkout
+    rec = pool._do_get()
+venv/lib/python3.13/site-packages/sqlalchemy/pool/impl.py:179: in _do_get
+    with util.safe_reraise():
+venv/lib/python3.13/site-packages/sqlalchemy/util/langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/impl.py:177: in _do_get
+    return self._create_connection()
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:390: in _create_connection
+    return _ConnectionRecord(self)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:674: in __init__
+    self.__connect()
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:900: in __connect
+    with util.safe_reraise():
+venv/lib/python3.13/site-packages/sqlalchemy/util/langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:896: in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+venv/lib/python3.13/site-packages/sqlalchemy/engine/create.py:646: in connect
+    return dialect.connect(*cargs, **cparams)
+venv/lib/python3.13/site-packages/sqlalchemy/engine/default.py:622: in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+dsn = 'host=localhost dbname=fastapi_db user=postgres password=postgres port=5432', connection_factory = None, cursor_factory = None
+kwargs = {'dbname': 'fastapi_db', 'host': 'localhost', 'password': 'postgres', 'port': 5432, ...}, kwasync = {}
+
+    def connect(dsn=None, connection_factory=None, cursor_factory=None, **kwargs):
+        """
+        Create a new database connection.
+    
+        The connection parameters can be specified as a string:
+    
+            conn = psycopg2.connect("dbname=test user=postgres password=secret")
+    
+        or using a set of keyword arguments:
+    
+            conn = psycopg2.connect(database="test", user="postgres", password="secret")
+    
+        Or as a mix of both. The basic connection parameters are:
+    
+        - *dbname*: the database name
+        - *database*: the database name (only as keyword argument)
+        - *user*: user name used to authenticate
+        - *password*: password used to authenticate
+        - *host*: database host address (defaults to UNIX socket if not provided)
+        - *port*: connection port number (defaults to 5432 if not provided)
+    
+        Using the *connection_factory* parameter a different class or connections
+        factory can be specified. It should be a callable object taking a dsn
+        argument.
+    
+        Using the *cursor_factory* parameter, a new default cursor factory will be
+        used by cursor().
+    
+        Using *async*=True an asynchronous connection will be created. *async_* is
+        a valid alias (for Python versions where ``async`` is a keyword).
+    
+        Any other keyword parameter will be passed to the underlying client
+        library: the list of supported parameters depends on the library version.
+    
+        """
+        kwasync = {}
+        if 'async' in kwargs:
+            kwasync['async'] = kwargs.pop('async')
+        if 'async_' in kwargs:
+            kwasync['async_'] = kwargs.pop('async_')
+    
+        dsn = _ext.make_dsn(dsn, **kwargs)
+&gt;       conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+E       sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) connection to server at "localhost" (::1), port 5432 failed: FATAL:  role "postgres" does not exist
+E       
+E       (Background on this error at: https://sqlalche.me/e/20/e3q8)
+
+venv/lib/python3.13/site-packages/psycopg2/__init__.py:122: OperationalError</error></testcase><testcase classname="tests.unit.test_calculator" name="test_add[add_two_positive_floats]" time="0.000"><error message="failed on setup with &quot;sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) connection to server at &quot;localhost&quot; (::1), port 5432 failed: FATAL:  role &quot;postgres&quot; does not exist&#10;&#10;(Background on this error at: https://sqlalche.me/e/20/e3q8)&quot;">self = &lt;sqlalchemy.engine.base.Connection object at 0x106166cf0&gt;, engine = Engine(postgresql://postgres:***@localhost:5432/fastapi_db), connection = None
+_has_events = None, _allow_revalidate = True, _allow_autobegin = True
+
+    def __init__(
+        self,
+        engine: Engine,
+        connection: Optional[PoolProxiedConnection] = None,
+        _has_events: Optional[bool] = None,
+        _allow_revalidate: bool = True,
+        _allow_autobegin: bool = True,
+    ):
+        """Construct a new Connection."""
+        self.engine = engine
+        self.dialect = dialect = engine.dialect
+    
+        if connection is None:
+            try:
+&gt;               self._dbapi_connection = engine.raw_connection()
+
+venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:146: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:3298: in raw_connection
+    return self.pool.connect()
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:449: in connect
+    return _ConnectionFairy._checkout(self)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:1263: in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:712: in checkout
+    rec = pool._do_get()
+venv/lib/python3.13/site-packages/sqlalchemy/pool/impl.py:179: in _do_get
+    with util.safe_reraise():
+venv/lib/python3.13/site-packages/sqlalchemy/util/langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/impl.py:177: in _do_get
+    return self._create_connection()
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:390: in _create_connection
+    return _ConnectionRecord(self)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:674: in __init__
+    self.__connect()
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:900: in __connect
+    with util.safe_reraise():
+venv/lib/python3.13/site-packages/sqlalchemy/util/langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:896: in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+venv/lib/python3.13/site-packages/sqlalchemy/engine/create.py:646: in connect
+    return dialect.connect(*cargs, **cparams)
+venv/lib/python3.13/site-packages/sqlalchemy/engine/default.py:622: in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+dsn = 'host=localhost dbname=fastapi_db user=postgres password=postgres port=5432', connection_factory = None, cursor_factory = None
+kwargs = {'dbname': 'fastapi_db', 'host': 'localhost', 'password': 'postgres', 'port': 5432, ...}, kwasync = {}
+
+    def connect(dsn=None, connection_factory=None, cursor_factory=None, **kwargs):
+        """
+        Create a new database connection.
+    
+        The connection parameters can be specified as a string:
+    
+            conn = psycopg2.connect("dbname=test user=postgres password=secret")
+    
+        or using a set of keyword arguments:
+    
+            conn = psycopg2.connect(database="test", user="postgres", password="secret")
+    
+        Or as a mix of both. The basic connection parameters are:
+    
+        - *dbname*: the database name
+        - *database*: the database name (only as keyword argument)
+        - *user*: user name used to authenticate
+        - *password*: password used to authenticate
+        - *host*: database host address (defaults to UNIX socket if not provided)
+        - *port*: connection port number (defaults to 5432 if not provided)
+    
+        Using the *connection_factory* parameter a different class or connections
+        factory can be specified. It should be a callable object taking a dsn
+        argument.
+    
+        Using the *cursor_factory* parameter, a new default cursor factory will be
+        used by cursor().
+    
+        Using *async*=True an asynchronous connection will be created. *async_* is
+        a valid alias (for Python versions where ``async`` is a keyword).
+    
+        Any other keyword parameter will be passed to the underlying client
+        library: the list of supported parameters depends on the library version.
+    
+        """
+        kwasync = {}
+        if 'async' in kwargs:
+            kwasync['async'] = kwargs.pop('async')
+        if 'async_' in kwargs:
+            kwasync['async_'] = kwargs.pop('async_')
+    
+        dsn = _ext.make_dsn(dsn, **kwargs)
+&gt;       conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+E       psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: FATAL:  role "postgres" does not exist
+
+venv/lib/python3.13/site-packages/psycopg2/__init__.py:122: OperationalError
+
+The above exception was the direct cause of the following exception:
+
+request = &lt;SubRequest 'setup_test_database' for &lt;Function test_add[add_two_positive_integers]&gt;&gt;
+
+    @pytest.fixture(scope="session", autouse=True)
+    def setup_test_database(request):
+        """
+        Set up the test database before the session starts, and tear it down after tests
+        unless --preserve-db is provided.
+        """
+        logger.info("Setting up test database...")
+        try:
+&gt;           Base.metadata.drop_all(bind=test_engine)
+
+tests/conftest.py:97: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+venv/lib/python3.13/site-packages/sqlalchemy/sql/schema.py:5935: in drop_all
+    bind._run_ddl_visitor(
+venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:3248: in _run_ddl_visitor
+    with self.begin() as conn:
+/opt/homebrew/Cellar/python@3.13/3.13.4/Frameworks/Python.framework/Versions/3.13/lib/python3.13/contextlib.py:141: in __enter__
+    return next(self.gen)
+venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:3238: in begin
+    with self.connect() as conn:
+venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:3274: in connect
+    return self._connection_cls(self)
+venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:148: in __init__
+    Connection._handle_dbapi_exception_noconnection(
+venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:2439: in _handle_dbapi_exception_noconnection
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:146: in __init__
+    self._dbapi_connection = engine.raw_connection()
+venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:3298: in raw_connection
+    return self.pool.connect()
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:449: in connect
+    return _ConnectionFairy._checkout(self)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:1263: in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:712: in checkout
+    rec = pool._do_get()
+venv/lib/python3.13/site-packages/sqlalchemy/pool/impl.py:179: in _do_get
+    with util.safe_reraise():
+venv/lib/python3.13/site-packages/sqlalchemy/util/langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/impl.py:177: in _do_get
+    return self._create_connection()
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:390: in _create_connection
+    return _ConnectionRecord(self)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:674: in __init__
+    self.__connect()
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:900: in __connect
+    with util.safe_reraise():
+venv/lib/python3.13/site-packages/sqlalchemy/util/langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:896: in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+venv/lib/python3.13/site-packages/sqlalchemy/engine/create.py:646: in connect
+    return dialect.connect(*cargs, **cparams)
+venv/lib/python3.13/site-packages/sqlalchemy/engine/default.py:622: in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+dsn = 'host=localhost dbname=fastapi_db user=postgres password=postgres port=5432', connection_factory = None, cursor_factory = None
+kwargs = {'dbname': 'fastapi_db', 'host': 'localhost', 'password': 'postgres', 'port': 5432, ...}, kwasync = {}
+
+    def connect(dsn=None, connection_factory=None, cursor_factory=None, **kwargs):
+        """
+        Create a new database connection.
+    
+        The connection parameters can be specified as a string:
+    
+            conn = psycopg2.connect("dbname=test user=postgres password=secret")
+    
+        or using a set of keyword arguments:
+    
+            conn = psycopg2.connect(database="test", user="postgres", password="secret")
+    
+        Or as a mix of both. The basic connection parameters are:
+    
+        - *dbname*: the database name
+        - *database*: the database name (only as keyword argument)
+        - *user*: user name used to authenticate
+        - *password*: password used to authenticate
+        - *host*: database host address (defaults to UNIX socket if not provided)
+        - *port*: connection port number (defaults to 5432 if not provided)
+    
+        Using the *connection_factory* parameter a different class or connections
+        factory can be specified. It should be a callable object taking a dsn
+        argument.
+    
+        Using the *cursor_factory* parameter, a new default cursor factory will be
+        used by cursor().
+    
+        Using *async*=True an asynchronous connection will be created. *async_* is
+        a valid alias (for Python versions where ``async`` is a keyword).
+    
+        Any other keyword parameter will be passed to the underlying client
+        library: the list of supported parameters depends on the library version.
+    
+        """
+        kwasync = {}
+        if 'async' in kwargs:
+            kwasync['async'] = kwargs.pop('async')
+        if 'async_' in kwargs:
+            kwasync['async_'] = kwargs.pop('async_')
+    
+        dsn = _ext.make_dsn(dsn, **kwargs)
+&gt;       conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+E       sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) connection to server at "localhost" (::1), port 5432 failed: FATAL:  role "postgres" does not exist
+E       
+E       (Background on this error at: https://sqlalche.me/e/20/e3q8)
+
+venv/lib/python3.13/site-packages/psycopg2/__init__.py:122: OperationalError</error></testcase><testcase classname="tests.unit.test_calculator" name="test_add[add_negative_and_positive_float]" time="0.000"><error message="failed on setup with &quot;sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) connection to server at &quot;localhost&quot; (::1), port 5432 failed: FATAL:  role &quot;postgres&quot; does not exist&#10;&#10;(Background on this error at: https://sqlalche.me/e/20/e3q8)&quot;">self = &lt;sqlalchemy.engine.base.Connection object at 0x106166cf0&gt;, engine = Engine(postgresql://postgres:***@localhost:5432/fastapi_db), connection = None
+_has_events = None, _allow_revalidate = True, _allow_autobegin = True
+
+    def __init__(
+        self,
+        engine: Engine,
+        connection: Optional[PoolProxiedConnection] = None,
+        _has_events: Optional[bool] = None,
+        _allow_revalidate: bool = True,
+        _allow_autobegin: bool = True,
+    ):
+        """Construct a new Connection."""
+        self.engine = engine
+        self.dialect = dialect = engine.dialect
+    
+        if connection is None:
+            try:
+&gt;               self._dbapi_connection = engine.raw_connection()
+
+venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:146: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:3298: in raw_connection
+    return self.pool.connect()
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:449: in connect
+    return _ConnectionFairy._checkout(self)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:1263: in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:712: in checkout
+    rec = pool._do_get()
+venv/lib/python3.13/site-packages/sqlalchemy/pool/impl.py:179: in _do_get
+    with util.safe_reraise():
+venv/lib/python3.13/site-packages/sqlalchemy/util/langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/impl.py:177: in _do_get
+    return self._create_connection()
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:390: in _create_connection
+    return _ConnectionRecord(self)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:674: in __init__
+    self.__connect()
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:900: in __connect
+    with util.safe_reraise():
+venv/lib/python3.13/site-packages/sqlalchemy/util/langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:896: in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+venv/lib/python3.13/site-packages/sqlalchemy/engine/create.py:646: in connect
+    return dialect.connect(*cargs, **cparams)
+venv/lib/python3.13/site-packages/sqlalchemy/engine/default.py:622: in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+dsn = 'host=localhost dbname=fastapi_db user=postgres password=postgres port=5432', connection_factory = None, cursor_factory = None
+kwargs = {'dbname': 'fastapi_db', 'host': 'localhost', 'password': 'postgres', 'port': 5432, ...}, kwasync = {}
+
+    def connect(dsn=None, connection_factory=None, cursor_factory=None, **kwargs):
+        """
+        Create a new database connection.
+    
+        The connection parameters can be specified as a string:
+    
+            conn = psycopg2.connect("dbname=test user=postgres password=secret")
+    
+        or using a set of keyword arguments:
+    
+            conn = psycopg2.connect(database="test", user="postgres", password="secret")
+    
+        Or as a mix of both. The basic connection parameters are:
+    
+        - *dbname*: the database name
+        - *database*: the database name (only as keyword argument)
+        - *user*: user name used to authenticate
+        - *password*: password used to authenticate
+        - *host*: database host address (defaults to UNIX socket if not provided)
+        - *port*: connection port number (defaults to 5432 if not provided)
+    
+        Using the *connection_factory* parameter a different class or connections
+        factory can be specified. It should be a callable object taking a dsn
+        argument.
+    
+        Using the *cursor_factory* parameter, a new default cursor factory will be
+        used by cursor().
+    
+        Using *async*=True an asynchronous connection will be created. *async_* is
+        a valid alias (for Python versions where ``async`` is a keyword).
+    
+        Any other keyword parameter will be passed to the underlying client
+        library: the list of supported parameters depends on the library version.
+    
+        """
+        kwasync = {}
+        if 'async' in kwargs:
+            kwasync['async'] = kwargs.pop('async')
+        if 'async_' in kwargs:
+            kwasync['async_'] = kwargs.pop('async_')
+    
+        dsn = _ext.make_dsn(dsn, **kwargs)
+&gt;       conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+E       psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: FATAL:  role "postgres" does not exist
+
+venv/lib/python3.13/site-packages/psycopg2/__init__.py:122: OperationalError
+
+The above exception was the direct cause of the following exception:
+
+request = &lt;SubRequest 'setup_test_database' for &lt;Function test_add[add_two_positive_integers]&gt;&gt;
+
+    @pytest.fixture(scope="session", autouse=True)
+    def setup_test_database(request):
+        """
+        Set up the test database before the session starts, and tear it down after tests
+        unless --preserve-db is provided.
+        """
+        logger.info("Setting up test database...")
+        try:
+&gt;           Base.metadata.drop_all(bind=test_engine)
+
+tests/conftest.py:97: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+venv/lib/python3.13/site-packages/sqlalchemy/sql/schema.py:5935: in drop_all
+    bind._run_ddl_visitor(
+venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:3248: in _run_ddl_visitor
+    with self.begin() as conn:
+/opt/homebrew/Cellar/python@3.13/3.13.4/Frameworks/Python.framework/Versions/3.13/lib/python3.13/contextlib.py:141: in __enter__
+    return next(self.gen)
+venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:3238: in begin
+    with self.connect() as conn:
+venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:3274: in connect
+    return self._connection_cls(self)
+venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:148: in __init__
+    Connection._handle_dbapi_exception_noconnection(
+venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:2439: in _handle_dbapi_exception_noconnection
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:146: in __init__
+    self._dbapi_connection = engine.raw_connection()
+venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:3298: in raw_connection
+    return self.pool.connect()
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:449: in connect
+    return _ConnectionFairy._checkout(self)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:1263: in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:712: in checkout
+    rec = pool._do_get()
+venv/lib/python3.13/site-packages/sqlalchemy/pool/impl.py:179: in _do_get
+    with util.safe_reraise():
+venv/lib/python3.13/site-packages/sqlalchemy/util/langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/impl.py:177: in _do_get
+    return self._create_connection()
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:390: in _create_connection
+    return _ConnectionRecord(self)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:674: in __init__
+    self.__connect()
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:900: in __connect
+    with util.safe_reraise():
+venv/lib/python3.13/site-packages/sqlalchemy/util/langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:896: in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+venv/lib/python3.13/site-packages/sqlalchemy/engine/create.py:646: in connect
+    return dialect.connect(*cargs, **cparams)
+venv/lib/python3.13/site-packages/sqlalchemy/engine/default.py:622: in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+dsn = 'host=localhost dbname=fastapi_db user=postgres password=postgres port=5432', connection_factory = None, cursor_factory = None
+kwargs = {'dbname': 'fastapi_db', 'host': 'localhost', 'password': 'postgres', 'port': 5432, ...}, kwasync = {}
+
+    def connect(dsn=None, connection_factory=None, cursor_factory=None, **kwargs):
+        """
+        Create a new database connection.
+    
+        The connection parameters can be specified as a string:
+    
+            conn = psycopg2.connect("dbname=test user=postgres password=secret")
+    
+        or using a set of keyword arguments:
+    
+            conn = psycopg2.connect(database="test", user="postgres", password="secret")
+    
+        Or as a mix of both. The basic connection parameters are:
+    
+        - *dbname*: the database name
+        - *database*: the database name (only as keyword argument)
+        - *user*: user name used to authenticate
+        - *password*: password used to authenticate
+        - *host*: database host address (defaults to UNIX socket if not provided)
+        - *port*: connection port number (defaults to 5432 if not provided)
+    
+        Using the *connection_factory* parameter a different class or connections
+        factory can be specified. It should be a callable object taking a dsn
+        argument.
+    
+        Using the *cursor_factory* parameter, a new default cursor factory will be
+        used by cursor().
+    
+        Using *async*=True an asynchronous connection will be created. *async_* is
+        a valid alias (for Python versions where ``async`` is a keyword).
+    
+        Any other keyword parameter will be passed to the underlying client
+        library: the list of supported parameters depends on the library version.
+    
+        """
+        kwasync = {}
+        if 'async' in kwargs:
+            kwasync['async'] = kwargs.pop('async')
+        if 'async_' in kwargs:
+            kwasync['async_'] = kwargs.pop('async_')
+    
+        dsn = _ext.make_dsn(dsn, **kwargs)
+&gt;       conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+E       sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) connection to server at "localhost" (::1), port 5432 failed: FATAL:  role "postgres" does not exist
+E       
+E       (Background on this error at: https://sqlalche.me/e/20/e3q8)
+
+venv/lib/python3.13/site-packages/psycopg2/__init__.py:122: OperationalError</error></testcase><testcase classname="tests.unit.test_calculator" name="test_add[add_zeros]" time="0.000"><error message="failed on setup with &quot;sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) connection to server at &quot;localhost&quot; (::1), port 5432 failed: FATAL:  role &quot;postgres&quot; does not exist&#10;&#10;(Background on this error at: https://sqlalche.me/e/20/e3q8)&quot;">self = &lt;sqlalchemy.engine.base.Connection object at 0x106166cf0&gt;, engine = Engine(postgresql://postgres:***@localhost:5432/fastapi_db), connection = None
+_has_events = None, _allow_revalidate = True, _allow_autobegin = True
+
+    def __init__(
+        self,
+        engine: Engine,
+        connection: Optional[PoolProxiedConnection] = None,
+        _has_events: Optional[bool] = None,
+        _allow_revalidate: bool = True,
+        _allow_autobegin: bool = True,
+    ):
+        """Construct a new Connection."""
+        self.engine = engine
+        self.dialect = dialect = engine.dialect
+    
+        if connection is None:
+            try:
+&gt;               self._dbapi_connection = engine.raw_connection()
+
+venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:146: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:3298: in raw_connection
+    return self.pool.connect()
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:449: in connect
+    return _ConnectionFairy._checkout(self)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:1263: in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:712: in checkout
+    rec = pool._do_get()
+venv/lib/python3.13/site-packages/sqlalchemy/pool/impl.py:179: in _do_get
+    with util.safe_reraise():
+venv/lib/python3.13/site-packages/sqlalchemy/util/langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/impl.py:177: in _do_get
+    return self._create_connection()
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:390: in _create_connection
+    return _ConnectionRecord(self)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:674: in __init__
+    self.__connect()
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:900: in __connect
+    with util.safe_reraise():
+venv/lib/python3.13/site-packages/sqlalchemy/util/langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:896: in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+venv/lib/python3.13/site-packages/sqlalchemy/engine/create.py:646: in connect
+    return dialect.connect(*cargs, **cparams)
+venv/lib/python3.13/site-packages/sqlalchemy/engine/default.py:622: in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+dsn = 'host=localhost dbname=fastapi_db user=postgres password=postgres port=5432', connection_factory = None, cursor_factory = None
+kwargs = {'dbname': 'fastapi_db', 'host': 'localhost', 'password': 'postgres', 'port': 5432, ...}, kwasync = {}
+
+    def connect(dsn=None, connection_factory=None, cursor_factory=None, **kwargs):
+        """
+        Create a new database connection.
+    
+        The connection parameters can be specified as a string:
+    
+            conn = psycopg2.connect("dbname=test user=postgres password=secret")
+    
+        or using a set of keyword arguments:
+    
+            conn = psycopg2.connect(database="test", user="postgres", password="secret")
+    
+        Or as a mix of both. The basic connection parameters are:
+    
+        - *dbname*: the database name
+        - *database*: the database name (only as keyword argument)
+        - *user*: user name used to authenticate
+        - *password*: password used to authenticate
+        - *host*: database host address (defaults to UNIX socket if not provided)
+        - *port*: connection port number (defaults to 5432 if not provided)
+    
+        Using the *connection_factory* parameter a different class or connections
+        factory can be specified. It should be a callable object taking a dsn
+        argument.
+    
+        Using the *cursor_factory* parameter, a new default cursor factory will be
+        used by cursor().
+    
+        Using *async*=True an asynchronous connection will be created. *async_* is
+        a valid alias (for Python versions where ``async`` is a keyword).
+    
+        Any other keyword parameter will be passed to the underlying client
+        library: the list of supported parameters depends on the library version.
+    
+        """
+        kwasync = {}
+        if 'async' in kwargs:
+            kwasync['async'] = kwargs.pop('async')
+        if 'async_' in kwargs:
+            kwasync['async_'] = kwargs.pop('async_')
+    
+        dsn = _ext.make_dsn(dsn, **kwargs)
+&gt;       conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+E       psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: FATAL:  role "postgres" does not exist
+
+venv/lib/python3.13/site-packages/psycopg2/__init__.py:122: OperationalError
+
+The above exception was the direct cause of the following exception:
+
+request = &lt;SubRequest 'setup_test_database' for &lt;Function test_add[add_two_positive_integers]&gt;&gt;
+
+    @pytest.fixture(scope="session", autouse=True)
+    def setup_test_database(request):
+        """
+        Set up the test database before the session starts, and tear it down after tests
+        unless --preserve-db is provided.
+        """
+        logger.info("Setting up test database...")
+        try:
+&gt;           Base.metadata.drop_all(bind=test_engine)
+
+tests/conftest.py:97: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+venv/lib/python3.13/site-packages/sqlalchemy/sql/schema.py:5935: in drop_all
+    bind._run_ddl_visitor(
+venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:3248: in _run_ddl_visitor
+    with self.begin() as conn:
+/opt/homebrew/Cellar/python@3.13/3.13.4/Frameworks/Python.framework/Versions/3.13/lib/python3.13/contextlib.py:141: in __enter__
+    return next(self.gen)
+venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:3238: in begin
+    with self.connect() as conn:
+venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:3274: in connect
+    return self._connection_cls(self)
+venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:148: in __init__
+    Connection._handle_dbapi_exception_noconnection(
+venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:2439: in _handle_dbapi_exception_noconnection
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:146: in __init__
+    self._dbapi_connection = engine.raw_connection()
+venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:3298: in raw_connection
+    return self.pool.connect()
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:449: in connect
+    return _ConnectionFairy._checkout(self)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:1263: in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:712: in checkout
+    rec = pool._do_get()
+venv/lib/python3.13/site-packages/sqlalchemy/pool/impl.py:179: in _do_get
+    with util.safe_reraise():
+venv/lib/python3.13/site-packages/sqlalchemy/util/langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/impl.py:177: in _do_get
+    return self._create_connection()
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:390: in _create_connection
+    return _ConnectionRecord(self)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:674: in __init__
+    self.__connect()
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:900: in __connect
+    with util.safe_reraise():
+venv/lib/python3.13/site-packages/sqlalchemy/util/langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:896: in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+venv/lib/python3.13/site-packages/sqlalchemy/engine/create.py:646: in connect
+    return dialect.connect(*cargs, **cparams)
+venv/lib/python3.13/site-packages/sqlalchemy/engine/default.py:622: in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+dsn = 'host=localhost dbname=fastapi_db user=postgres password=postgres port=5432', connection_factory = None, cursor_factory = None
+kwargs = {'dbname': 'fastapi_db', 'host': 'localhost', 'password': 'postgres', 'port': 5432, ...}, kwasync = {}
+
+    def connect(dsn=None, connection_factory=None, cursor_factory=None, **kwargs):
+        """
+        Create a new database connection.
+    
+        The connection parameters can be specified as a string:
+    
+            conn = psycopg2.connect("dbname=test user=postgres password=secret")
+    
+        or using a set of keyword arguments:
+    
+            conn = psycopg2.connect(database="test", user="postgres", password="secret")
+    
+        Or as a mix of both. The basic connection parameters are:
+    
+        - *dbname*: the database name
+        - *database*: the database name (only as keyword argument)
+        - *user*: user name used to authenticate
+        - *password*: password used to authenticate
+        - *host*: database host address (defaults to UNIX socket if not provided)
+        - *port*: connection port number (defaults to 5432 if not provided)
+    
+        Using the *connection_factory* parameter a different class or connections
+        factory can be specified. It should be a callable object taking a dsn
+        argument.
+    
+        Using the *cursor_factory* parameter, a new default cursor factory will be
+        used by cursor().
+    
+        Using *async*=True an asynchronous connection will be created. *async_* is
+        a valid alias (for Python versions where ``async`` is a keyword).
+    
+        Any other keyword parameter will be passed to the underlying client
+        library: the list of supported parameters depends on the library version.
+    
+        """
+        kwasync = {}
+        if 'async' in kwargs:
+            kwasync['async'] = kwargs.pop('async')
+        if 'async_' in kwargs:
+            kwasync['async_'] = kwargs.pop('async_')
+    
+        dsn = _ext.make_dsn(dsn, **kwargs)
+&gt;       conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+E       sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) connection to server at "localhost" (::1), port 5432 failed: FATAL:  role "postgres" does not exist
+E       
+E       (Background on this error at: https://sqlalche.me/e/20/e3q8)
+
+venv/lib/python3.13/site-packages/psycopg2/__init__.py:122: OperationalError</error></testcase><testcase classname="tests.unit.test_calculator" name="test_subtract[subtract_two_positive_integers]" time="0.000"><error message="failed on setup with &quot;sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) connection to server at &quot;localhost&quot; (::1), port 5432 failed: FATAL:  role &quot;postgres&quot; does not exist&#10;&#10;(Background on this error at: https://sqlalche.me/e/20/e3q8)&quot;">self = &lt;sqlalchemy.engine.base.Connection object at 0x106166cf0&gt;, engine = Engine(postgresql://postgres:***@localhost:5432/fastapi_db), connection = None
+_has_events = None, _allow_revalidate = True, _allow_autobegin = True
+
+    def __init__(
+        self,
+        engine: Engine,
+        connection: Optional[PoolProxiedConnection] = None,
+        _has_events: Optional[bool] = None,
+        _allow_revalidate: bool = True,
+        _allow_autobegin: bool = True,
+    ):
+        """Construct a new Connection."""
+        self.engine = engine
+        self.dialect = dialect = engine.dialect
+    
+        if connection is None:
+            try:
+&gt;               self._dbapi_connection = engine.raw_connection()
+
+venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:146: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:3298: in raw_connection
+    return self.pool.connect()
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:449: in connect
+    return _ConnectionFairy._checkout(self)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:1263: in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:712: in checkout
+    rec = pool._do_get()
+venv/lib/python3.13/site-packages/sqlalchemy/pool/impl.py:179: in _do_get
+    with util.safe_reraise():
+venv/lib/python3.13/site-packages/sqlalchemy/util/langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/impl.py:177: in _do_get
+    return self._create_connection()
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:390: in _create_connection
+    return _ConnectionRecord(self)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:674: in __init__
+    self.__connect()
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:900: in __connect
+    with util.safe_reraise():
+venv/lib/python3.13/site-packages/sqlalchemy/util/langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:896: in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+venv/lib/python3.13/site-packages/sqlalchemy/engine/create.py:646: in connect
+    return dialect.connect(*cargs, **cparams)
+venv/lib/python3.13/site-packages/sqlalchemy/engine/default.py:622: in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+dsn = 'host=localhost dbname=fastapi_db user=postgres password=postgres port=5432', connection_factory = None, cursor_factory = None
+kwargs = {'dbname': 'fastapi_db', 'host': 'localhost', 'password': 'postgres', 'port': 5432, ...}, kwasync = {}
+
+    def connect(dsn=None, connection_factory=None, cursor_factory=None, **kwargs):
+        """
+        Create a new database connection.
+    
+        The connection parameters can be specified as a string:
+    
+            conn = psycopg2.connect("dbname=test user=postgres password=secret")
+    
+        or using a set of keyword arguments:
+    
+            conn = psycopg2.connect(database="test", user="postgres", password="secret")
+    
+        Or as a mix of both. The basic connection parameters are:
+    
+        - *dbname*: the database name
+        - *database*: the database name (only as keyword argument)
+        - *user*: user name used to authenticate
+        - *password*: password used to authenticate
+        - *host*: database host address (defaults to UNIX socket if not provided)
+        - *port*: connection port number (defaults to 5432 if not provided)
+    
+        Using the *connection_factory* parameter a different class or connections
+        factory can be specified. It should be a callable object taking a dsn
+        argument.
+    
+        Using the *cursor_factory* parameter, a new default cursor factory will be
+        used by cursor().
+    
+        Using *async*=True an asynchronous connection will be created. *async_* is
+        a valid alias (for Python versions where ``async`` is a keyword).
+    
+        Any other keyword parameter will be passed to the underlying client
+        library: the list of supported parameters depends on the library version.
+    
+        """
+        kwasync = {}
+        if 'async' in kwargs:
+            kwasync['async'] = kwargs.pop('async')
+        if 'async_' in kwargs:
+            kwasync['async_'] = kwargs.pop('async_')
+    
+        dsn = _ext.make_dsn(dsn, **kwargs)
+&gt;       conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+E       psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: FATAL:  role "postgres" does not exist
+
+venv/lib/python3.13/site-packages/psycopg2/__init__.py:122: OperationalError
+
+The above exception was the direct cause of the following exception:
+
+request = &lt;SubRequest 'setup_test_database' for &lt;Function test_add[add_two_positive_integers]&gt;&gt;
+
+    @pytest.fixture(scope="session", autouse=True)
+    def setup_test_database(request):
+        """
+        Set up the test database before the session starts, and tear it down after tests
+        unless --preserve-db is provided.
+        """
+        logger.info("Setting up test database...")
+        try:
+&gt;           Base.metadata.drop_all(bind=test_engine)
+
+tests/conftest.py:97: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+venv/lib/python3.13/site-packages/sqlalchemy/sql/schema.py:5935: in drop_all
+    bind._run_ddl_visitor(
+venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:3248: in _run_ddl_visitor
+    with self.begin() as conn:
+/opt/homebrew/Cellar/python@3.13/3.13.4/Frameworks/Python.framework/Versions/3.13/lib/python3.13/contextlib.py:141: in __enter__
+    return next(self.gen)
+venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:3238: in begin
+    with self.connect() as conn:
+venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:3274: in connect
+    return self._connection_cls(self)
+venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:148: in __init__
+    Connection._handle_dbapi_exception_noconnection(
+venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:2439: in _handle_dbapi_exception_noconnection
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:146: in __init__
+    self._dbapi_connection = engine.raw_connection()
+venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:3298: in raw_connection
+    return self.pool.connect()
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:449: in connect
+    return _ConnectionFairy._checkout(self)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:1263: in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:712: in checkout
+    rec = pool._do_get()
+venv/lib/python3.13/site-packages/sqlalchemy/pool/impl.py:179: in _do_get
+    with util.safe_reraise():
+venv/lib/python3.13/site-packages/sqlalchemy/util/langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/impl.py:177: in _do_get
+    return self._create_connection()
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:390: in _create_connection
+    return _ConnectionRecord(self)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:674: in __init__
+    self.__connect()
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:900: in __connect
+    with util.safe_reraise():
+venv/lib/python3.13/site-packages/sqlalchemy/util/langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+venv/lib/python3.13/site-packages/sqlalchemy/pool/base.py:896: in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+venv/lib/python3.13/site-packages/sqlalchemy/engine/create.py:646: in connect
+    return dialect.connect(*cargs, **cparams)
+venv/lib/python3.13/site-packages/sqlalchemy/engine/default.py:622: in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+dsn = 'host=localhost dbname=fastapi_db user=postgres password=postgres port=5432', connection_factory = None, cursor_factory = None
+kwargs = {'dbname': 'fastapi_db', 'host': 'localhost', 'password': 'postgres', 'port': 5432, ...}, kwasync = {}
+
+    def connect(dsn=None, connection_factory=None, cursor_factory=None, **kwargs):
+        """
+        Create a new database connection.
+    
+        The connection parameters can be specified as a string:
+    
+            conn = psycopg2.connect("dbname=test user=postgres password=secret")
+    
+        or using a set of keyword arguments:
+    
+            conn = psycopg2.connect(database="test", user="postgres", password="secret")
+    
+        Or as a mix of both. The basic connection parameters are:
+    
+        - *dbname*: the database name
+        - *database*: the database name (only as keyword argument)
+        - *user*: user name used to authenticate
+        - *password*: password used to authenticate
+        - *host*: database host address (defaults to UNIX socket if not provided)
+        - *port*: connection port number (defaults to 5432 if not provided)
+    
+        Using the *connection_factory* parameter a different class or connections
+        factory can be specified. It should be a callable object taking a dsn
+        argument.
+    
+        Using the *cursor_factory* parameter, a new default cursor factory will be
+        used by cursor().
+    
+        Using *async*=True an asynchronous connection will be created. *async_* is
+        a valid alias (for Python versions where ``async`` is a keyword).
+    
+        Any other keyword parameter will be passed to the underlying client
+        library: the list of supported parameters depends on the library version.
+    
+        """
+        kwasync = {}
+        if 'async' in kwargs:
+            kwasync['async'] = kwargs.pop('async')
+        if 'async_' in kwargs:
+            kwasync['async_'] = kwargs.pop('async_')
+    
+        dsn = _ext.make_dsn(dsn, **kwargs)
+&gt;       conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+E       sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) connection to server at "localhost" (::1), port 5432 failed: FATAL:  role "postgres" does not exist
+E       
+E       (Background on this error at: https://sqlalche.me/e/20/e3q8)
+
+venv/lib/python3.13/site-packages/psycopg2/__init__.py:122: OperationalError</error></testcase></testsuite></testsuites>
