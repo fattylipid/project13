@@ -11,3 +11,5 @@
 
 ![GitHub Actions](screenshots/login.png)
 ![GitHub Actions](screenshots/register.png)
+
+---
